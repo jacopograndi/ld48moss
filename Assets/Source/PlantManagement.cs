@@ -3,8 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TMPro;
+using UnityEngine.UI;
+
+public class Item {
+    public string name;
+    public Sprite sprite;
+    public string description;
+}
 
 public class PlantManagement : MonoBehaviour {
+    public GameObject itemPrefab;
+    public List<Sprite> itemSprites;
+    public List<Item> itemPool = new List<Item>();
+    public List<Item> inventory = new List<Item>();
+    public List<Item> choice = new List<Item>();
+
     GroundGeneration gg;
 
     public List<GameObject> plantsPrefabs = new List<GameObject>();
@@ -12,12 +25,20 @@ public class PlantManagement : MonoBehaviour {
     GameObject tileIndicator;
     SpriteRenderer prefabIndicator;
     GameObject plantsFather;
+    GameObject invetoryFather;
     public List<PlantLogic> plants = new List<PlantLogic>();
 
     public TMP_Text amtLight;
     public TMP_Text amtIncome;
     public TMP_Text amtCost;
     public TMP_Text labelCost;
+    public GameObject rewardPanel;
+    public Image rew0;
+    public Image rew1;
+    public TMP_Text rew0Name;
+    public TMP_Text rew1Name;
+    public TMP_Text rew0Description;
+    public TMP_Text rew1Description;
 
     public int reslight = 200;
 
@@ -25,8 +46,37 @@ public class PlantManagement : MonoBehaviour {
 
     public float[] pcost = new float[3] { 50, 75, 120 };
 
-    public enum State { Idle, Placing }
+    public enum State { Idle, Placing, Reward }
     public State state;
+
+    void ConstructItemPool () {
+        foreach (Sprite sprite in itemSprites) {
+            Item item = new Item();
+            item.name = sprite.name;
+            item.sprite = sprite;
+            if (item.name == "item_ghost") {
+                item.description = "faster fast";
+            }
+            itemPool.Add(item);
+        }
+    }
+
+    Item PickItem (List<Item> items) {
+        if (items.Count == 0) return null;
+        else return items[Random.Range(0, items.Count-1)];
+    }
+
+    List<Item> PickItems (int n) {
+        List<Item> items = new List<Item>();
+        List<Item> temp = new List<Item>();
+        foreach (Item i in itemPool) temp.Add(i);
+        for (int i = 0; i < n; i++) {
+            Item item = PickItem(temp);
+            items.Add(item);
+            temp.Remove(item);
+        }
+        return items;
+    }
 
     void Start() {
         gg = GameObject.Find("Grid").GetComponent<GroundGeneration>();
@@ -36,8 +86,17 @@ public class PlantManagement : MonoBehaviour {
         amtIncome = GameObject.Find("AmtIncome").GetComponent<TMP_Text>();
         amtCost = GameObject.Find("AmtCost").GetComponent<TMP_Text>();
         labelCost = GameObject.Find("LabelCost").GetComponent<TMP_Text>();
+        rewardPanel = GameObject.Find("ChoosePanel");
+        rew0 = rewardPanel.transform.Find("Rew0Panel").Find("Rew0").GetComponent<Image>();
+        rew1 = rewardPanel.transform.Find("Rew1Panel").Find("Rew1").GetComponent<Image>();
+        rew0Name = rewardPanel.transform.Find("Rew0Panel").Find("Rew0Name").GetComponent<TMP_Text>();
+        rew1Name = rewardPanel.transform.Find("Rew1Panel").Find("Rew1Name").GetComponent<TMP_Text>();
+        rew0Description = rewardPanel.transform.Find("Rew0Panel").Find("Rew0Description").GetComponent<TMP_Text>();
+        rew1Description = rewardPanel.transform.Find("Rew1Panel").Find("Rew1Description").GetComponent<TMP_Text>();
+        invetoryFather = GameObject.Find("Inventory");
         GameObject obj = new GameObject();
         prefabIndicator = obj.AddComponent<SpriteRenderer>();
+        ConstructItemPool();
 
         state = State.Idle;
     }
@@ -76,8 +135,21 @@ public class PlantManagement : MonoBehaviour {
             }
         }
 
+        foreach (Transform deadman in invetoryFather.transform) { 
+            Destroy(deadman.gameObject); 
+        }
+        Vector3 off = new Vector3();
+        foreach (Item item in inventory) {
+            GameObject obj = Instantiate(itemPrefab, 
+                invetoryFather.transform.position + off, Quaternion.identity);
+            obj.transform.SetParent(invetoryFather.transform);
+            obj.GetComponent<Image>().sprite = item.sprite;
+            off += new Vector3(32+10, 0, 0);
+        }
+
         amtCost.gameObject.SetActive(false);
         labelCost.gameObject.SetActive(false);
+        rewardPanel.SetActive(false);
 
         if (state == State.Idle) {
         } else if (state == State.Placing) {
@@ -124,6 +196,7 @@ public class PlantManagement : MonoBehaviour {
                     prefabIndicator.sprite = plantsPrefabs[sel].GetComponent<SpriteRenderer>().sprite;
                     int moss = rhover.hasMoss ? 1 : 2;
                     float cost = pcost[sel] * moss;
+
                     if (reslight >= cost) {
                         amtCost.gameObject.SetActive(true);
                         labelCost.gameObject.SetActive(true);
@@ -131,17 +204,30 @@ public class PlantManagement : MonoBehaviour {
                         amtCost.text = cost.ToString("N0");
 
                         if (Input.GetMouseButtonDown(0)) {
-                            reslight -= (int)cost;
                             state = State.Idle;
+                            reslight -= (int)cost;
 
                             Spawn(mpInt, sel);
                             if (!rhover.hasMoss && sel == 2) {
                                 gg.CoverWithMoss(rhover);
+                                state = State.Reward;
+                                choice = PickItems(2);
                             }
                         }
+                    } else {
+                        labelCost.gameObject.SetActive(true);
+                        labelCost.text = "Not enough light!";
                     }
                 }
             }
+        } else if (state == State.Reward) {
+            rewardPanel.SetActive(true);
+            rew0.sprite = choice[0].sprite;
+            rew1.sprite = choice[1].sprite;
+            rew0Name.text = choice[0].name;
+            rew1Name.text = choice[1].name;
+            rew0Description.text = choice[0].description;
+            rew1Description.text = choice[1].description;
         }
 
         float income = 0;
@@ -171,5 +257,11 @@ public class PlantManagement : MonoBehaviour {
     public void UIPressPlant(int val) {
         state = State.Placing;
         sel = val;
+    }
+
+    public void UIPressPick (int val) {
+        state = State.Idle;
+        inventory.Add(choice[val]);
+        itemPool.Remove(choice[val]);
     }
 }

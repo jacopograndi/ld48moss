@@ -74,6 +74,7 @@ public class GroundGeneration : MonoBehaviour {
     public TileBase moss_2Tile;
     public TileBase moss_cornerTile;
     public TileBase moss_corner_innerTile;
+    public TileBase ground_mossTile;
     public Tilemap groundtilemap;
     public Tilemap wallstilemap;
     public List<Room> rooms = new List<Room>();
@@ -341,31 +342,32 @@ public class GroundGeneration : MonoBehaviour {
     void Start() {
         groundtilemap = GameObject.Find("GroundTM").GetComponent<Tilemap>();
         wallstilemap = GameObject.Find("WallsTM").GetComponent<Tilemap>();
-        Gen(24);
+        Gen(30);
 
         CoverWithMoss(start);
     }
 
     public void CoverWithMoss(Room room) {
+        room.hasMoss = true;
 
         List<Rule> rules = new List<Rule>();
         {
             Rule rule = new Rule();
             rule.match = new int[9] {
-                0, 0, 0,
+                0, 2, 0,
                 1, 1, 1,
-                0, 2, 0
+                0, 0, 0
             };
             rule.tile = new TileBase[] { moss_0Tile, moss_1Tile, moss_2Tile, };
             rule.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, 0f), Vector3.one);
             rules.Add(rule);
-        }/*
+        }
         {
             Rule rule = new Rule();
             rule.match = new int[9] {
-                0, 0, 0,
+                0, 1, 2,
                 0, 1, 1,
-                0, 1, 2
+                0, 0, 0
             };
             rule.tile = new TileBase[] { moss_cornerTile, };
             rule.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, 0f), Vector3.one);
@@ -374,31 +376,33 @@ public class GroundGeneration : MonoBehaviour {
         {
             Rule rule = new Rule();
             rule.match = new int[9] {
-                0, 1, 0,
+                0, 0, 2,
                 1, 1, 0,
-                0, 0, 2
+                0, 1, 0
             };
             rule.tile = new TileBase[] { moss_corner_innerTile, };
             rule.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, 0f), Vector3.one);
             rules.Add(rule);
-        }*/
+        }
 
         List<Rule> rotatedRules = new List<Rule>();
         foreach (Rule rule in rules) {
+            int[] rot = new int[9];
+            rule.match.CopyTo(rot, 0);
             for (int i = 0; i < 4; i++) {
-                Rule rot = new Rule();
-                rot.match = new int[9] {
-                    rule.match[2], rule.match[5], rule.match[8],
-                    rule.match[1], rule.match[4], rule.match[7],
-                    rule.match[0], rule.match[3], rule.match[6]
+                Rule n = new Rule();
+                n.match = new int[9];
+                rot.CopyTo(n.match, 0);
+                n.tile = rule.tile;
+                n.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, -90f * i), Vector3.one);
+                rotatedRules.Add(n);
+                rot = new int[9] {
+                    rot[2], rot[5], rot[8],
+                    rot[1], rot[4], rot[7],
+                    rot[0], rot[3], rot[6]
                 };
-                rot.tile = rule.tile;
-                rot.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, 90f * i), Vector3.one);
-                rotatedRules.Add(rot);
             }
         }
-
-        room.hasMoss = true;
         List<Vector3Int> border = room.Contour();
         foreach (Vector3Int b in border) {
             foreach (Rule rule in rotatedRules) {
@@ -414,7 +418,7 @@ public class GroundGeneration : MonoBehaviour {
                             }
                         }
                         if (rule.match[xy] == 2) {
-                            if (!wallstilemap.GetTile(see)) {
+                            if (room.cells.Contains(see)) {
                                 found = false;
                                 break;
                             }
@@ -428,6 +432,10 @@ public class GroundGeneration : MonoBehaviour {
                     break;
                 }
             }
+        }
+
+        foreach(Vector3Int cell in room.cells) {
+            groundtilemap.SetTile(cell, ground_mossTile);
         }
     }
 }
