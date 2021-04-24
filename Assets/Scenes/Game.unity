@@ -223,25 +223,25 @@ Tilemap:
   m_TileMatrixArray:
   - m_RefCount: 0
     m_Data:
-      e00: -1.084227e-19
-      e01: -0.0000000020766855
-      e02: -0.00000000207649
-      e03: -0.00000000207649
-      e10: 1.036e-42
-      e11: 3.5e-43
-      e12: 3.5e-43
-      e13: 3.5e-43
+      e00: -2.5244127e-29
+      e01: -3.4888465e+24
+      e02: -3.488593e+24
+      e03: -3.488593e+24
+      e10: 7.13e-43
+      e11: 2.69e-43
+      e12: 2.69e-43
+      e13: 2.69e-43
       e20: 2.0160803e-16
-      e21: -1.5868965e+29
-      e22: 3.9957294
-      e23: -1.5868965e+29
+      e21: -3.7111983e+19
+      e22: 8.3176177e-10
+      e23: -3.7111983e+19
       e30: 4.5904e-41
-      e31: 1.037e-42
-      e32: 1.036e-42
-      e33: 1.037e-42
+      e31: 7.15e-43
+      e32: 7.13e-43
+      e33: 7.15e-43
   m_TileColorArray:
   - m_RefCount: 0
-    m_Data: {r: -1.58683e+29, g: -1.58683e+29, b: -1.58683e+29, a: -1.58683e+29}
+    m_Data: {r: -3.7108746e+19, g: -3.7108746e+19, b: -3.7108746e+19, a: -3.7108746e+19}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3024,10 +3024,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: {x: 100, y: 100}
-  groundTile: {fileID: 11400000, guid: bdd9770138d8b2d4e9ad08d51943c386, type: 2}
-  corridorTile: {fileID: 11400000, guid: bc8d800a5224a4945a0085791ad794ae, type: 2}
-  roomTile: {fileID: 11400000, guid: ce7e87233a7e14b45a0897b8fe1cdc0a, type: 2}
-  mossTile: {fileID: 11400000, guid: 974ad0f9f74323948afd9a2d21a5d8f5, type: 2}
+  ground_full_0Tile: {fileID: 11400000, guid: bdd9770138d8b2d4e9ad08d51943c386, type: 2}
+  ground_full_1Tile: {fileID: 11400000, guid: 73c21b735701e6e42a6c612379068954, type: 2}
+  ground_corridorTile: {fileID: 11400000, guid: bc8d800a5224a4945a0085791ad794ae, type: 2}
+  ground_corridor_cornerTile: {fileID: 11400000, guid: dbb27b08d322f344c98c8039e2a4f71b, type: 2}
+  ground_roomTile: {fileID: 11400000, guid: ce7e87233a7e14b45a0897b8fe1cdc0a, type: 2}
+  moss_0Tile: {fileID: 11400000, guid: 974ad0f9f74323948afd9a2d21a5d8f5, type: 2}
+  moss_1Tile: {fileID: 11400000, guid: 7765f70df53783f4fb8d094acf8676f3, type: 2}
+  moss_2Tile: {fileID: 11400000, guid: 920775a4c80096f42be81681c26f1bd2, type: 2}
+  moss_cornerTile: {fileID: 11400000, guid: 110dca413e2fe8a49b40791959313285, type: 2}
+  moss_corner_innerTile: {fileID: 11400000, guid: a1eed5da46792bd479fb6653ad4259b9, type: 2}
   groundtilemap: {fileID: 0}
   wallstilemap: {fileID: 0}
 --- !u!1 &1201380111
