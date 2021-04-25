@@ -36,6 +36,7 @@ public class EnemyManagement : MonoBehaviour {
         foreach(SpawnPoint sp in spawnPoints) {
             if (sp.room.hasMoss) filterMoss.Add(sp);
         }*/
+        if (enemies.Count > 100) { return; } //lag
         Vector3Int pt = spawnPoints[0].pt;
         Vector3 worldpt = gg.groundtilemap.CellToWorld(pt);
         worldpt += new Vector3(0.25f / 2.0f, 0.25f / 2.0f, -1);
@@ -43,6 +44,8 @@ public class EnemyManagement : MonoBehaviour {
         GameObject obj = Instantiate(pref, worldpt, Quaternion.identity);
         obj.transform.SetParent(EnemyFather.transform);
         EnemyLogic el = obj.GetComponent<EnemyLogic>();
+        el.maxHp *= (phase/2+1);
+        el.hp = el.maxHp;
         enemies.Add(el);
     }
 
@@ -52,7 +55,7 @@ public class EnemyManagement : MonoBehaviour {
             Spawn();
         }
 
-        spawnCooldown -= Time.deltaTime * 0.01f;
+        spawnCooldown -= Time.deltaTime * 0.006f;
         spawnCooldown = Mathf.Max(0.2f, spawnCooldown);
 
         if (phase == 0 && spawnCooldown < 1.7f) {
@@ -66,6 +69,11 @@ public class EnemyManagement : MonoBehaviour {
         if (phase == 2 && spawnCooldown < 0.5f) {
             enemyPool.Add(enemyPrefab[2]);
             phase = 3;
+        }
+        if (phase == 2 && spawnCooldown < 0.3f) {
+            enemyPool.Add(enemyPrefab[0]);
+            enemyPool.Add(enemyPrefab[0]);
+            phase = 4;
         }
 
         List<EnemyLogic> delList = new List<EnemyLogic>();

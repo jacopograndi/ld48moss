@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2755214949101498698}
   - component: {fileID: -4169512354297757725}
   - component: {fileID: 8025430719755104589}
+  - component: {fileID: 5601908607241653386}
   m_Layer: 0
   m_Name: plantChompy
   m_TagString: Untagged
@@ -116,7 +117,27 @@ MonoBehaviour:
   production: 0
   prodCooldown: 2
   cell: {x: 0, y: 0, z: 0}
+  maxHp: 100
   hp: 100
+--- !u!95 &5601908607241653386
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2755214949101498701}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 37b9f3244d9531440a396b4491711247, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &8875073969986708771
 PrefabInstance:
   m_ObjectHideFlags: 0

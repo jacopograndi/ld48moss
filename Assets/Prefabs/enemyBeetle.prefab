@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: {fileID: 4584791800391479716, guid: d188dba0f86e647478eb12174e12de6b, type: 3}
   pathCooldown: 5
-  speed: 2
+  speed: 1
   maxHp: 120
   hp: 120
   damage: 2

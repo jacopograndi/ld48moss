@@ -345,7 +345,7 @@ public class PlantManagement : MonoBehaviour {
                         }
                     } else {
                         labelCost.gameObject.SetActive(true);
-                        labelCost.text = "Not enough light!";
+                        labelCost.text = "Not enough light (If there's no moss it costs x2)";
                     }
                 }
             }
@@ -361,7 +361,8 @@ public class PlantManagement : MonoBehaviour {
 
         float income = 0;
         foreach (PlantLogic pl in plants) {
-            income += pl.production / pl.prodCooldown;
+            income += (pl.production * Bonuses().prod) 
+                / (pl.prodCooldown * Bonuses().prodrate);
         }
         amtIncome.text = income.ToString("N1");
 
@@ -379,11 +380,11 @@ public class PlantManagement : MonoBehaviour {
         }
 
         if (!endshown) {
-            if (inventory.Count > 12) {
+            if (inventory.Count > 15) {
                 winpanel.gameObject.SetActive(true);
                 state = State.End;
                 endshown = true;
-                winpanel.Find("Why").GetComponent<TMP_Text>().text = "You collected 12 items!";
+                winpanel.Find("Why").GetComponent<TMP_Text>().text = "You collected 15 items!";
                 winpanel.Find("Name").GetComponent<TMP_Text>().text = "You Win!";
             }
             if (plants.Count == 0 && reslight < 50) {
