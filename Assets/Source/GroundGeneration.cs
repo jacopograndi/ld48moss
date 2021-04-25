@@ -75,10 +75,28 @@ public class GroundGeneration : MonoBehaviour {
     public TileBase moss_cornerTile;
     public TileBase moss_corner_innerTile;
     public TileBase ground_mossTile;
+    public TileBase darkTile;
     public Tilemap groundtilemap;
     public Tilemap wallstilemap;
+    public Tilemap darktilemap;
     public List<Room> rooms = new List<Room>();
     public Room start;
+
+    public List<Vector3Int> Expand(List<Vector3Int> cells) {
+        List<Vector3Int> exp = new List<Vector3Int>();
+        foreach (Vector3Int cell in cells) {
+            exp.Add(cell);
+            for (int x = -1; x < 2; x++) {
+                for (int y = -1; y < 2; y++) {
+                    Vector3Int v = cell + new Vector3Int(x, y, 0);
+                    if (!exp.Contains(v)) {
+                        exp.Add(v);
+                    }
+                }
+            }
+        }
+        return exp;
+    }
 
     Room GenRoomRandRect(int size, int n = 8) {
         Room room = new Room();
@@ -256,6 +274,7 @@ public class GroundGeneration : MonoBehaviour {
             rooms[0].SqrDistance(temp, out from, out to);
             DrawCorridor(from, to);
         }
+        /*
         rooms.Remove(start);
 
         rooms.Sort((a, b) => a.cells[0].y.CompareTo(b.cells[0].y));
@@ -271,7 +290,7 @@ public class GroundGeneration : MonoBehaviour {
             rooms[i].SqrDistance(temp, out from, out to);
             DrawCorridor(from, to);
         }
-        rooms.Add(start);
+        rooms.Add(start);*/
     }
 
     void Gen(int n) {
@@ -280,6 +299,8 @@ public class GroundGeneration : MonoBehaviour {
                 TileBase tile = Random.Range(0, 2) == 0 ?
                     ground_full_0Tile : ground_full_1Tile;
                 wallstilemap.SetTile(new Vector3Int(x, -y, 0), tile);
+                darktilemap.SetTile(new Vector3Int(x, -y, 0), darkTile);
+                darktilemap.SetColor(new Vector3Int(x, -y, 0), new Color(0, 0, 0, 1));
             }
         }
 
@@ -342,13 +363,33 @@ public class GroundGeneration : MonoBehaviour {
     void Start() {
         groundtilemap = GameObject.Find("GroundTM").GetComponent<Tilemap>();
         wallstilemap = GameObject.Find("WallsTM").GetComponent<Tilemap>();
+        darktilemap = GameObject.Find("DarkTM").GetComponent<Tilemap>();
         Gen(30);
 
         CoverWithMoss(start);
     }
 
+    public void UncoverRoom(Room room) {
+        List<Vector3Int> exp = Expand(room.cells);
+        List<Vector3Int> exp2 = Expand(exp);
+        foreach (Vector3Int cell in exp2) {
+            darktilemap.SetColor(cell, new Color(0, 0, 0, 0.5f));
+        }
+        foreach (Vector3Int cell in exp) {
+            darktilemap.SetColor(cell, new Color(0, 0, 0, 0.25f));
+        }
+        foreach (Vector3Int cell in room.cells) {
+            darktilemap.SetColor(cell, new Color(0, 0, 0, 0));
+        }
+    }
+
     public void CoverWithMoss(Room room) {
         room.hasMoss = true;
+
+        UncoverRoom(room);
+        foreach (Room n in room.neighbors) {
+            UncoverRoom(n);
+        }
 
         List<Rule> rules = new List<Rule>();
         {

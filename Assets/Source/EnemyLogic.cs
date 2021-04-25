@@ -31,6 +31,8 @@ public class EnemyLogic : MonoBehaviour {
 
     Transform hpBar;
 
+    Rigidbody2D rb;
+
     Vector3Int[] dirToVec = new Vector3Int[4] {
         new Vector3Int(1, 0, 0),
         new Vector3Int(0, 1, 0),
@@ -125,6 +127,7 @@ public class EnemyLogic : MonoBehaviour {
     void Start() {
         gg = FindObjectOfType<GroundGeneration>();
         pm = FindObjectOfType<PlantManagement>();
+        rb = GetComponent<Rigidbody2D>();
 
         attackTimer = Time.time + attackCooldown;
 
@@ -163,6 +166,7 @@ public class EnemyLogic : MonoBehaviour {
             pathpos.x += 0.25f / 2;
             pathpos.y += 0.25f / 2;
             pathpos.z = -1;
+
             transform.position = Vector3.MoveTowards(
                 transform.position, pathpos, 0.001f * speed);
             if (Vector3.Distance(pathpos, transform.position) < 0.11f) {

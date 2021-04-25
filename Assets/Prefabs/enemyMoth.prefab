@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -5454078207603840599}
   - component: {fileID: 5040669281049408789}
   m_Layer: 0
-  m_Name: enemyAnt
+  m_Name: enemyMoth
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,10 +101,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: {fileID: 4584791800391479716, guid: d188dba0f86e647478eb12174e12de6b, type: 3}
   pathCooldown: 2
-  speed: 10
-  maxHp: 10
-  hp: 10
-  damage: 3
+  speed: 5
+  maxHp: 50
+  hp: 50
+  damage: 10
   range: 0.3
   attackCooldown: 1.2
 --- !u!58 &-7529695901125370176
@@ -154,7 +154,7 @@ Animator:
   m_GameObject: {fileID: 6179243644959333861}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: c5e369ebe8723dd44a4367244982a027, type: 2}
+  m_Controller: {fileID: 9100000, guid: 5e5b6341ba338584f82c95d3cce4e2a4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

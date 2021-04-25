@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ShotLogic : MonoBehaviour {
 
+    public GameObject FxBoom;
     public float damage;
 
     void Start() {
@@ -15,5 +16,9 @@ public class ShotLogic : MonoBehaviour {
             el.hp -= damage;
         }
         Destroy(gameObject);
+        
+        GameObject fx = Instantiate(FxBoom);
+        fx.transform.position = transform.position;
+        Destroy(fx, 0.5f);
     }
 }

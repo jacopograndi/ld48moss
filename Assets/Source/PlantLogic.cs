@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlantLogic : MonoBehaviour {
 
-    public int production = 1;
+    public float production = 1;
     public float prodCooldown = 2f;
     float prodTimer = 2f;
 
@@ -25,13 +25,13 @@ public class PlantLogic : MonoBehaviour {
     }
 
     void Produce () {
-        pm.reslight += production;
+        pm.reslight += production * pm.Bonuses().prod;
     }
 
     void Update() {
         if (prodTimer < Time.time) {
             Produce();
-            prodTimer = Time.time + prodCooldown;
+            prodTimer = Time.time + prodCooldown * pm.Bonuses().prodrate;
         }
 
         hpBar.localScale = new Vector3(hp / maxHp, 1, 1);

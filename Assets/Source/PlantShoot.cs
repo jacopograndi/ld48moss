@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlantShoot : MonoBehaviour {
 
+    PlantManagement pm;
     EnemyManagement em;
 
     public GameObject ShotPrefab;
@@ -17,6 +18,7 @@ public class PlantShoot : MonoBehaviour {
 
     void Start() {
         em = FindObjectOfType<EnemyManagement>();
+        pm = FindObjectOfType<PlantManagement>();
         shotTimer = Time.time + shotCooldown;
     }
 
@@ -24,7 +26,8 @@ public class PlantShoot : MonoBehaviour {
         float dist = float.PositiveInfinity;
         foreach (EnemyLogic en in em.enemies) {
             Vector2 diff = en.transform.position - transform.position;
-            if (diff.magnitude < range) {
+            float r = range * pm.Bonuses().range;
+            if (diff.magnitude < r) {
                 RaycastHit2D hit = Physics2D.Raycast(transform.position,
                     diff.normalized, diff.magnitude);
                 if (hit) {
@@ -45,12 +48,12 @@ public class PlantShoot : MonoBehaviour {
         GameObject obj = Instantiate(ShotPrefab, transform.position + new Vector3(0, 0, -1), dir);
         float shotSpeed = 300;
         obj.GetComponent<Rigidbody2D>().AddForce(diff.normalized * shotSpeed);
-        obj.GetComponent<ShotLogic>().damage = damage;
+        obj.GetComponent<ShotLogic>().damage = damage * pm.Bonuses().damage;
     }
 
     void Update() {
         if (shotTimer < Time.time) {
-            shotTimer = Time.time + shotCooldown;
+            shotTimer = Time.time + shotCooldown * pm.Bonuses().firerate;
             Scan();
             if (target) {
                 Shoot();
